@@ -84,7 +84,7 @@
     
     self.installsStandardGestureForInteractiveMovement = NO;
 
-    _exposedLayoutMargin = UIEdgeInsetsMake(40.0, 0.0, 0.0, 0.0);
+    _exposedLayoutMargin = UIEdgeInsetsMake(0.0, 0.0, 0.0, 0.0);
     _exposedItemSize = CGSizeZero;
     _exposedTopOverlap = 10.0;
     _exposedBottomOverlap = 10.0;

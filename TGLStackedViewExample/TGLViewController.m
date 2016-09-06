@@ -72,7 +72,7 @@
     
     if (self) {
         
-        _cardCount = 20;
+        _cardCount = 2;
         _cardSize = CGSizeZero;
         
         _stackedLayoutMargin = UIEdgeInsetsMake(20.0, 0.0, 0.0, 0.0);

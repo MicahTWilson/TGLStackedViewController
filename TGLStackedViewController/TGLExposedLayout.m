@@ -41,11 +41,11 @@
     
     if (self) {
         
-        self.layoutMargin = UIEdgeInsetsMake(40.0, 0.0, 0.0, 0.0);
+        self.layoutMargin = UIEdgeInsetsMake(-20.0, 0.0, 0.0, 0.0);
         self.topOverlap = 10.0;
         self.bottomOverlap = 10.0;
         self.bottomOverlapCount = 1;
-
+        
         self.pinningMode = TGLExposedLayoutPinningModeAll;
         self.topPinningCount = -1;
         self.bottomPinningCount = -1;
@@ -118,7 +118,7 @@
 }
 
 - (CGSize)collectionViewContentSize {
-
+    
     CGSize contentSize = self.collectionView.bounds.size;
     
     contentSize.height -= self.collectionView.contentInset.top + self.collectionView.contentInset.bottom;
@@ -130,12 +130,12 @@
     
     CGSize layoutSize = CGSizeMake(CGRectGetWidth(self.collectionView.bounds) - self.layoutMargin.left - self.layoutMargin.right,
                                    CGRectGetHeight(self.collectionView.bounds) - self.layoutMargin.top - self.layoutMargin.bottom);
-
+    
     CGSize itemSize = self.itemSize;
     
     if (itemSize.width == 0.0) itemSize.width = layoutSize.width;
     if (itemSize.height == 0.0) itemSize.height = self.collectionViewContentSize.height - self.layoutMargin.top - self.layoutMargin.bottom;
-
+    
     CGFloat itemHorizontalOffset = 0.5 * (layoutSize.width - itemSize.width);
     CGPoint itemOrigin = CGPointMake(self.layoutMargin.left + floor(itemHorizontalOffset), 0.0);
     
@@ -145,16 +145,16 @@
     NSInteger bottomPinningCount = MIN(itemCount - self.exposedItemIndex - 1, self.bottomPinningCount);
     
     if (bottomPinningCount < 0) bottomPinningCount = itemCount - self.exposedItemIndex - 1;
-
+    
     NSInteger topPinningCount = self.topPinningCount;
     
     if (topPinningCount < 0) topPinningCount = self.exposedItemIndex;
-
+    
     for (NSInteger item = 0; item < itemCount; item++) {
-
+        
         NSIndexPath *indexPath = [NSIndexPath indexPathForItem:item inSection:0];
         UICollectionViewLayoutAttributes *attributes = [UICollectionViewLayoutAttributes layoutAttributesForCellWithIndexPath:indexPath];
-
+        
         if (item < self.exposedItemIndex) {
             
             if (self.pinningMode == TGLExposedLayoutPinningModeAll) {
@@ -165,21 +165,21 @@
                     
                     attributes.frame = CGRectMake(itemOrigin.x, self.collectionViewContentSize.height, itemSize.width, itemSize.height);
                     attributes.hidden = YES;
-
+                    
                 } else {
                     
                     count += bottomPinningCount;
                     
                     attributes.frame = CGRectMake(itemOrigin.x, self.collectionViewContentSize.height - self.layoutMargin.bottom - count * self.bottomOverlap, itemSize.width, itemSize.height);
                 }
-
+                
             } else {
                 
                 // Items before exposed item
                 // are aligned above top with
                 // amount -topOverlap
                 //
-                attributes.frame = CGRectMake(itemOrigin.x, self.layoutMargin.top - self.topOverlap, itemSize.width, itemSize.height);
+                attributes.frame = CGRectMake(itemOrigin.x, self.layoutMargin.top, itemSize.width, itemSize.height);
                 
                 // Items below first unexposed
                 // are hidden to improve
@@ -187,19 +187,19 @@
                 //
                 if (item < self.exposedItemIndex - 1) attributes.hidden = YES;
             }
-
+            
         } else if (item == self.exposedItemIndex) {
             
             // Exposed item
             //
             attributes.frame = CGRectMake(itemOrigin.x, self.layoutMargin.top, itemSize.width, itemSize.height);
-
+            
         } else if (self.pinningMode != TGLExposedLayoutPinningModeNone) {
-
+            
             // Pinning lower items to bottom
             //
             if (item > self.exposedItemIndex + bottomPinningCount) {
-
+                
                 attributes.frame = CGRectMake(itemOrigin.x, self.collectionViewContentSize.height, itemSize.width, itemSize.height);
                 attributes.hidden = YES;
                 
@@ -218,16 +218,16 @@
             //
             attributes.frame = CGRectMake(itemOrigin.x, self.collectionViewContentSize.height, itemSize.width, itemSize.height);
             attributes.hidden = YES;
-
+            
         } else {
-        
+            
             // At max -bottomOverlapCount
             // overlapping item(s) at the
             // bottom right below the
             // exposed item
             //
             NSInteger count = MIN(self.bottomOverlapCount + 1, itemCount - self.exposedItemIndex) - (item - self.exposedItemIndex);
-
+            
             attributes.frame = CGRectMake(itemOrigin.x, self.layoutMargin.top + itemSize.height - count * self.bottomOverlap, itemSize.width, itemSize.height);
             
             // Issue #21
@@ -237,13 +237,13 @@
             // being hidden
             //
             if (item == self.exposedItemIndex + bottomOverlapCount && attributes.frame.origin.y < self.collectionView.bounds.size.height - self.layoutMargin.bottom) {
-
+                
                 ++bottomOverlapCount;
             }
         }
-
+        
         attributes.zIndex = item;
-
+        
         layoutAttributes[indexPath] = attributes;
     }
     
